@@ -89,6 +89,12 @@ Store: skins red(free)/blue 500/ninja 800/pink 1000/robo 1500; Extra Heart 1000,
 - Headless SwiftShader ~10 fps (software); real GPUs fine. Extension popup verified in 3D.
 - Git: local history rewritten to drop Claude co-author trailers; remote still old until user force-pushes (auto-mode blocked force push). Never add Co-Authored-By.
 
+## Session 6 (2026-11-11) — v2.1.0 realistic 3D
+- render3d.js switched from toon to realistic: `toon()` now returns MeshStandardMaterial (opts rough/metal/flat), outlines no-op, ACES tone mapping, FogExp2 (aerial haze), shader sky dome (SKY_FS: gradient + sun/moon disc+glow) also used for PMREM env map (refreshed every 1.2 s HD / 3 s Lite).
+- Procedural canvas textures (grassTex/dirtTex/sideTex/woodTex/barkTex/stoneTex, fbm noise, cached in TEX). `landform()` = noise-displaced icosphere with vertex colours (hills green, mountains rock+snow). Instanced forest line (70 trees, wraps), billboard clouds, valley floor plane. Grass blades InstancedMesh per chunk (HD only).
+- Camera UP lowered to 2.6 so the horizon sits lower (more sky). Lite: shadows 1024, DPR 1, no blades.
+- SwiftShader headless ~2.5 fps (software only); real GPU needed to judge perf.
+
 ## Next / ideas (roadmap items not done)
 - Boss levels (19–24), egg-throwing chicken, falling platforms
 - Supabase leaderboard + analytics events (roadmap Phase 10) — needs user's Supabase project

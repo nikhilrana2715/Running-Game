@@ -33,7 +33,7 @@
 
 |  |  |
 |---|---|
-| 🧊 **Full 3D world** | Toon-shaded 3D terrain, hero, enemies and items with real-time shadows, rolling hills, mountains and clouds. Switch between **3D HD / 3D Lite / 2D** in Settings. |
+| 🧊 **Realistic 3D world** | PBR-lit 3D terrain with procedural grass/dirt/bark/wood textures, swaying-style grass blades, forests, snowy mountains, soft clouds, atmospheric haze, sun & moon sky, real-time shadows and reflections. Switch between **3D HD / 3D Lite / 2D** in Settings. |
 | 🌗 **Living world** | A real-time day → sunset → night → dawn cycle. Sky, sun/moon, stars, fireflies, glowing coins, lantern-lit darkness, the music *and* the UI colours all change with it. |
 | 🕸️ **Web Swing** | Double-tap jump to shoot a web, zip forward and fling into a long glide. Tap again mid-flight to chain swings. |
 | 🫧 **Power-ups** | Speed Boots, Super Jump, Shield, Coin Magnet, Heart and Web refills float along every run. |
@@ -106,7 +106,8 @@ Coins are banked when you finish a level or hit game over, and also when you qui
 
 ### 3D graphics
 - Real 3D scene (three.js, bundled locally, so it works offline and inside the extension): block terrain, a 3D hero for every skin, 3D enemies, coins, stars, chests, power bubbles and goal gate.
-- Day ↔ night drives the sun and moon arc, light colour, soft shadows, fog, starfield, a hero lantern at night and glowing coins and boxes.
+- Realistic look: physically based materials + ACES tone mapping, image-based lighting from the live sky, procedural textures, noise-sculpted hills and snow-capped mountains, a forest line, soft billboard clouds and distance haze (aerial perspective).
+- Day ↔ night drives a shader sky (sun disc, glow, moon), light colour, soft shadows, fog, starfield, a hero lantern at night and glowing coins and boxes.
 - **Graphics setting:** *Auto* (HD on desktop, Lite on phones and the popup), *3D HD* (shadows, high DPI), *3D Lite* (no shadows, lower DPI), *2D* (the classic renderer). Without WebGL the game falls back to 2D on its own.
 - Gameplay physics are identical in 2D and 3D, so levels, scores and saves are shared.
 
