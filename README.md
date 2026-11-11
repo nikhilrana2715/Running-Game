@@ -19,7 +19,7 @@
 
 **[▶ Play in browser](https://nikhilrana2715.github.io/Running-Game/)** ·
 **[⬇ Download APK](https://github.com/nikhilrana2715/Running-Game/releases/latest/download/FunnyJump-debug.apk)** ·
-**[🧩 Chrome extension zip](https://github.com/nikhilrana2715/Running-Game/releases/latest)**
+**[🧩 Chrome extension zip](https://github.com/nikhilrana2715/Running-Game/releases/latest/download/funny-jump-extension.zip)**
 
 [Features](#-features) · [Controls](#-controls) · [Install](#-install--play) · [Build from source](#-build-from-source) · [Deploy](#-deploy--release) · [Architecture](#-architecture) · [Roadmap](#-roadmap) · [FAQ](#-faq)
 
@@ -94,6 +94,11 @@ Active power-ups show as countdown chips in the HUD. The *Power Boost* upgrade m
 
 Coins are banked when you finish a level or hit game over, and also when you quit, restart, or close/minimise the app, so you never lose them.
 
+### Obstacles & combos
+- 🪨 **Crumbling platforms:** stone slabs over gaps shake when you land, drop after 0.5 s, and respawn 3 s later.
+- 🐔 **Egg-bomber chickens:** in later levels, flying chickens drop eggs when you run underneath.
+- 🔥 **Coin combo:** grab coins less than 0.9 s apart to build a streak. Every 8 coins raises the score multiplier (up to **x5**) and adds +3 bonus coins.
+
 ### Daily rewards & missions
 - **Login streak:** 50 → 75 → 100 → 150 → 200 → 250 → **500 coins + free Revive** on day 7.
 - **3 daily missions** (e.g. *Web Swing 6 times*, *Stomp 10 enemies*, *Collect 200 coins*) worth 50–150 coins each.
@@ -117,9 +122,21 @@ Hold jump for a higher jump. In Endless Run, ◀ slows you down and ▶ speeds y
 
 | Platform | How |
 |---|---|
-| 🌐 **Browser / PWA** | Open **[nikhilrana2715.github.io/Running-Game](https://nikhilrana2715.github.io/Running-Game/)** → *Install app* from the address bar to play offline. |
-| 🧩 **Chrome extension** | Download the zip from [Releases](https://github.com/nikhilrana2715/Running-Game/releases/latest) → unzip → `chrome://extensions` → enable **Developer mode** → **Load unpacked** → select the folder. Click the toolbar icon to play in the popup, or press **Alt+Shift+J** for a full tab. |
-| 🤖 **Android** | Download [`FunnyJump-debug.apk`](https://github.com/nikhilrana2715/Running-Game/releases/latest/download/FunnyJump-debug.apk) → open on the phone → allow *Install unknown apps*. Runs fullscreen in landscape. |
+| 🌐 **Browser / PWA** | Open **[nikhilrana2715.github.io/Running-Game](https://nikhilrana2715.github.io/Running-Game/)**. In Chrome/Edge, click the *Install* icon in the address bar to get an offline app. |
+| 🧩 **Chrome extension** | See the step-by-step guide below. |
+| 🤖 **Android** | Download [`FunnyJump-debug.apk`](https://github.com/nikhilrana2715/Running-Game/releases/latest/download/FunnyJump-debug.apk), open it on the phone and allow *Install unknown apps*. Runs fullscreen in landscape. |
+
+### 🧩 Install the Chrome extension (until it's on the Web Store)
+
+1. Download **[funny-jump-extension.zip](https://github.com/nikhilrana2715/Running-Game/releases/latest/download/funny-jump-extension.zip)**.
+2. **Extract** it: right-click → *Extract All…*. Chrome cannot load a `.zip` directly.
+3. Open **`chrome://extensions`** in the address bar.
+4. Turn on **Developer mode** (top-right switch).
+5. Click **Load unpacked** and select the **extracted folder**, the one that directly contains `manifest.json`.
+6. Click the 🧩 puzzle icon → 📌 pin **Funny Jump**. Click it to play in the popup, use ⛶ or **Alt+Shift+J** for a full tab.
+
+> **Troubleshooting:** *"Manifest file is missing"* means you selected the parent folder, so pick the inner folder that contains `manifest.json`. Keep the folder; deleting it removes the extension.
+> Works in Chrome, Edge, Brave and Opera (any Chromium browser).
 
 ## 🛠️ Build from source
 
@@ -213,7 +230,8 @@ scripts/                  # build, icons, store assets, dev server
 - [x] Daily rewards & missions
 - [x] CI: GitHub Pages + automated releases
 - [ ] Chrome Web Store listing
-- [ ] Boss levels, egg-throwing chicken, falling platforms
+- [x] Crumbling platforms, egg-bomber chickens, coin combos
+- [ ] Boss levels
 - [ ] Online leaderboard
 - [ ] Signed Play Store release build
 - [ ] Composed music tracks

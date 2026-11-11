@@ -80,7 +80,7 @@ export class Level {
     const opts = [
       ['flat', 3], ['gap', 2 + d * 2], ['step', 1.5], ['plats', 1 + d * 2], ['boxes', 1.3],
       ['mush', 1.6 + d], ['spike', d > 0.12 ? 1 + d * 2 : 0], ['chicken', d > 0.26 ? 0.8 + d * 2 : 0],
-      ['mover', d > 0.26 ? 0.7 + d * 1.5 : 0], ['crates', d > 0.35 ? 0.9 : 0.3], ['chest', 0.35],
+      ['mover', d > 0.26 ? 0.7 + d * 1.5 : 0], ['crates', d > 0.35 ? 0.9 : 0.3], ['chest', 0.35], ['crumble', d > 0.15 ? 1 + d * 1.5 : 0],
     ];
     if (!this.endless && this.index === 1 && !this.signPlaced && len > 14) { this.signPlaced = true; return this.segGap(true); }
     let tot = opts.reduce((a, o) => a + o[1], 0), k = this.rng() * tot, pick = 'flat';
@@ -175,6 +175,21 @@ export class Level {
     this.ent('chicken', cs[cs.length - 1], (this.h - this.ri(2, 3)) * T);
     if (this.chance(0.5)) this.coinsRow(cs[1], 4, this.h - 1);
     this.maybeStar(cs[4], (this.h - 4) * T);
+  }
+
+  // gap bridged by crumbling platforms (they shake, fall, respawn after 3 s)
+  segCrumble() {
+    this.flatRun(2, false);
+    const w = this.ri(5, 6), c0 = this.cols.length;
+    for (let i = 0; i < w; i++) this.pushCol(ROWS);
+    const n = w === 5 ? 2 : 3, row = this.h - this.ri(0, 1);
+    for (let i = 0; i < n; i++) {
+      const cx = c0 + 0.4 + i * ((w - 1.9) / (n - 1));
+      this.ent('crumble', cx, row * T);
+      this.ent('coin', cx + 0.25, (row - 1) * T + 4);
+    }
+    this.maybeStar(c0 + w / 2, (row - 3) * T);
+    this.flatRun(2, false);
   }
 
   segMover() {

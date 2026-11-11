@@ -395,3 +395,19 @@ export function drawShield(ctx, cx, cy, t, left) {
   ctx.strokeStyle = 'rgba(215,184,255,.9)'; ctx.lineWidth = 2.5; ctx.stroke();
   ctx.restore();
 }
+
+// Crumbling platform: cracked stone slab; turns reddish while shaking/falling.
+export function drawCrumble(ctx, x, y, w, warn) {
+  rr(ctx, x, y, w, 18, 6); fillStroke(ctx, warn ? '#C98A6E' : '#A7A2B5');
+  ctx.strokeStyle = 'rgba(43,26,16,.55)'; ctx.lineWidth = 2;
+  ctx.beginPath(); ctx.moveTo(x + w * 0.3, y + 2); ctx.lineTo(x + w * 0.38, y + 9); ctx.lineTo(x + w * 0.32, y + 16);
+  ctx.moveTo(x + w * 0.68, y + 2); ctx.lineTo(x + w * 0.6, y + 10); ctx.lineTo(x + w * 0.66, y + 16); ctx.stroke();
+  ctx.fillStyle = 'rgba(255,255,255,.35)'; ctx.fillRect(x + 6, y + 3, w - 12, 2.5);
+}
+
+export function drawEgg(ctx, cx, cy, t) {
+  ctx.save(); ctx.translate(cx, cy); ctx.rotate(Math.sin(t * 10) * 0.25);
+  ctx.beginPath(); ctx.ellipse(0, 0, 8, 10.5, 0, 0, TAU); fillStroke(ctx, '#FFFDF5', 2.5);
+  ctx.fillStyle = '#E8C9A0'; ctx.beginPath(); ctx.arc(-2, 3, 1.6, 0, TAU); ctx.arc(3, -2, 1.2, 0, TAU); ctx.fill();
+  ctx.restore();
+}

@@ -76,6 +76,11 @@ Store: skins red(free)/blue 500/ninja 800/pink 1000/robo 1500; Extra Heart 1000,
 - Chrome Web Store: `docs/CHROME_WEB_STORE.md`, images in `store/` (`scripts/store-assets.mjs`, needs puppeteer-core), privacy policy `src/privacy.html`.
 - Version 1.1.0. Repo: github.com/nikhilrana2715/Running-Game.
 
+## Session 4 (2026-11-11) — v1.2.0
+- GitHub Pages enabled via API (build_type=workflow) → live at https://nikhilrana2715.github.io/Running-Game/
+- New: `crumble` ents (one-way, trig 0.5 s → fall → respawn 3 s; `segCrumble` in levelgen, d>0.15), chicken drops `egg` ents when hero within 380 px (diff>0.2), coin combo (`addCoins`: <0.9 s streak, mult 1+floor(combo/8) max 5, +3 coins per tier, HUD `#hud-combo`). NOTE: new segment weight changed all level layouts (still seeded, 5 stars each).
+- Release also uploads stable `funny-jump-extension.zip` (latest/download link). Extension verified in real Chrome from release zip (popup + full tab, no errors).
+
 ## Next / ideas (roadmap items not done)
 - Boss levels (19–24), egg-throwing chicken, falling platforms
 - Supabase leaderboard + analytics events (roadmap Phase 10) — needs user's Supabase project

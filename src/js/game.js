@@ -53,8 +53,10 @@ export class Game {
       case 'chest': o.w = 44; o.h = 40; o.open = false; break;
       case 'mushroom': o.w = 36; o.h = 40; o.vx = -GAME.enemy.mushroomSpeed; o.vy = 0; o.dir = -1; o.squash = 0; break;
       case 'spike': o.w = 36; o.h = 36; o.x += 6; o.y += 4; o.x0 = o.x; o.rot = 0; break;
-      case 'chicken': o.w = 44; o.h = 32; o.y0 = o.y; o.dir = -1; break;
+      case 'chicken': o.w = 44; o.h = 32; o.y0 = o.y; o.dir = -1; o.eggT = 1 + Math.random(); break;
       case 'mover': o.w = T * 2.5; o.h = 18; o.x0 = o.x; o.px = o.x; break;
+      case 'crumble': o.w = T * 1.5; o.h = 18; o.y0 = o.y; o.trig = 0; o.fall = false; o.vy = 0; o.back = 0; o.shk = 0; break;
+      case 'egg': o.w = 16; o.h = 20; o.vy = 60; break;
       case 'checkpoint': o.w = 40; o.h = 96; o.active = false; break;
       case 'power': o.w = o.h = 40; o.y0 = o.y; break;
       case 'goal': o.w = 132; o.h = 150; break;
@@ -225,9 +227,10 @@ export class Game {
       // moving platforms (one-way)
       if (pl.vy >= 0) {
         for (const m of this.ents) {
-          if (m.type !== 'mover' || !m.alive) continue;
+          if ((m.type !== 'mover' && m.type !== 'crumble') || !m.alive || m.fall || m.back > 0) continue;
           if (pl.x + pl.w > m.x + 4 && pl.x < m.x + m.w - 4 && prevBottom <= m.y + 6 && pl.y + pl.h >= m.y) {
             pl.y = m.y - pl.h; pl.vy = 0; landed = true; pl.ride = m;
+            if (m.type === 'crumble' && !m.trig) { m.trig = 0.5; sfx.crumble(); }
           }
         }
       }
@@ -337,9 +340,17 @@ export class Game {
     for (const e of this.ents) if (e.alive && e.type === 'mushroom' && Math.abs(e.x + e.w / 2 - (c * T + T / 2)) < T && Math.abs(e.y + e.h - r * T) < 8) this.killEnemy(e);
   }
 
+  // Coin combo: coins grabbed < 0.9 s apart build a streak; every 8 = +1 score multiplier (max x5) and +3 bonus coins.
   addCoins(n, x, y) {
-    this.coins += n; this.score += GAME.score.coin * n; sfx.coin();
-    this.popup(x, y, `+${GAME.score.coin * n}`, '#FFE58A');
+    this.combo = this.clock - (this.lastCoinT ?? -9) < 0.9 ? (this.combo || 0) + n : n; this.lastCoinT = this.clock;
+    const mult = Math.min(5, 1 + Math.floor(this.combo / 8));
+    if (mult > (this.comboMult || 1)) {
+      this.coins += 3; this.popup(x, y - 28, `COMBO x${mult}!  +3`, '#FF8A3D'); sfx.combo();
+      for (let i = 0; i < 12; i++) this.spark(x, y, '#FF8A3D', 260);
+    }
+    this.comboMult = mult;
+    this.coins += n; this.score += GAME.score.coin * n * mult; sfx.coin();
+    this.popup(x, y, `+${GAME.score.coin * n * mult}`, mult > 1 ? '#FFB066' : '#FFE58A');
     for (let i = 0; i < 5; i++) this.spark(x, y, '#FFE58A');
   }
 
@@ -484,10 +495,33 @@ export class Game {
           else e.rot = Math.sin(e.t * 2) * 0.15;
           this.touchEnemy(e, pbox, false);
           break;
-        case 'chicken':
+        case 'chicken': {
           e.x -= GAME.enemy.chickenSpeed * dt * (this.mode === 'endless' ? 1.6 : 1);
           e.y = e.y0 + Math.sin(e.t * 2.4) * 34;
           this.touchEnemy(e, pbox, true);
+          // egg bomber: drops an egg when the hero is close ahead/below (harder levels only)
+          const ahead = e.x - pl.x;
+          if (live && this.level.diff > 0.2 && ahead > -40 && ahead < 380 && (e.eggT -= dt) <= 0) {
+            e.eggT = 1.6 + Math.random() * 1.2;
+            this.ents.push(this.makeEnt({ type: 'egg', x: e.x + 14, y: e.y + 26 })); sfx.egg();
+          }
+          break;
+        }
+        case 'egg': {
+          e.vy = Math.min(GAME.maxFall, e.vy + GAME.gravity * 0.6 * dt); e.y += e.vy * dt;
+          const c = Math.floor((e.x + 8) / T), r = Math.floor((e.y + e.h) / T), tl = this.level.tile(c, r);
+          if (isSolid(tl) || tl === TILE.PLAT || e.y > VIEW_H + 40) {
+            e.alive = false;
+            for (let i = 0; i < 8; i++) this.spark(e.x + 8, e.y + e.h, i % 2 ? '#FFD84A' : '#FFFFFF', 180);
+            break;
+          }
+          if (live && overlap(pbox, e)) { e.alive = false; this.hurt(e.x + 8); for (let i = 0; i < 8; i++) this.spark(e.x + 8, e.y + 10, '#FFD84A', 200); }
+          break;
+        }
+        case 'crumble':
+          if (e.back > 0) { e.back -= dt; if (e.back <= 0) { e.y = e.y0; e.fall = false; e.trig = 0; e.vy = 0; } break; }
+          if (e.fall) { e.vy += GAME.gravity * dt; e.y += e.vy * dt; if (e.y > VIEW_H + 80) e.back = 3; break; }
+          if (e.trig > 0) { e.trig -= dt; e.shk = (Math.random() - 0.5) * 4; if (e.trig <= 0) { e.trig = -1; e.fall = true; e.vy = 0; e.shk = 0; this.dust(e.x + e.w / 2, e.y + 10, 4); } }
           break;
         case 'mover': {
           const nx = e.x0 + (Math.sin(e.t * e.speed) * 0.5 + 0.5) * e.range;
@@ -556,6 +590,7 @@ export class Game {
       mode: this.mode, lives: this.lives, hearts: pl.hearts, maxHearts: this.maxHearts, score: this.score, coins: this.coins,
       stars: this.stars, totalStars: this.level.totalStars, time: Math.floor(this.time), distance: Math.floor(pl.x / T),
       night: Math.round((this.sky?.night || 0) * 50) / 50,
+      combo: this.clock - (this.lastCoinT ?? -9) < 0.9 && this.comboMult > 1 ? this.comboMult : 1,
       webs: this.webs, pw: Object.entries(this.pw).filter(([, v]) => v > 0).map(([k, v]) => [k, Math.ceil(v)]),
     };
     const key = JSON.stringify(h);
@@ -593,6 +628,8 @@ export class Game {
         case 'spike': A.drawSpike(ctx, e.x + e.w / 2, e.y + e.h + 2, e.t, e.rot); break;
         case 'chicken': A.drawChicken(ctx, e.x + e.w / 2, e.y + e.h / 2, e.t, e.dir < 0 ? 1 : -1); break;
         case 'mover': A.drawMover(ctx, e.x, e.y, e.w); break;
+        case 'crumble': if (e.back <= 0) A.drawCrumble(ctx, e.x + (e.shk || 0), e.y, e.w, e.trig > 0 || e.fall); break;
+        case 'egg': A.drawEgg(ctx, e.x + 8, e.y + 10, e.t); break;
         case 'checkpoint': A.drawCheckpoint(ctx, e.x, e.y, e.active, e.t); break;
         case 'goal': A.drawGoal(ctx, e.x, e.y, e.t); break;
         case 'power': A.drawPower(ctx, e.x + 20, e.y + 20, e.t, POWERUPS[e.kind]); break;

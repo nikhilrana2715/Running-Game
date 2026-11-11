@@ -129,6 +129,7 @@ function renderHud(h) {
     }
   }
   set('#hud-web', h.webs);
+  if (h.combo !== lastHud.combo) { $('#hud-combo').hidden = h.combo <= 1; set('#hud-combo-x', 'x' + h.combo); if (h.combo > 1) bump($('#hud-combo')); }
   if (h.webs !== lastHud.webs && lastHud.webs !== undefined) bump($('#hud-web-pill'));
   const pk = h.pw.map(([k, v]) => k + v).join();
   if (pk !== (lastHud.pk || '')) $('#hud-powers').innerHTML = h.pw.map(([k, v]) => `<span class="pw-chip" style="--pc:${POWERUPS[k].color}">${POWERUPS[k].icon}<b>${v}</b></span>`).join('');

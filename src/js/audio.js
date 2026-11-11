@@ -60,6 +60,9 @@ export const sfx = {
   doubleJump() { tone({ f: 420, f2: 980, d: 0.18, type: 'triangle', v: 0.35 }); },
   web() { noise({ d: 0.12, v: 0.3, hp: 1800, lp: 9000 }); tone({ f: 900, f2: 300, d: 0.14, type: 'sawtooth', v: 0.12 }); },
   power() { [523, 784, 1047, 1568].forEach((f, i) => tone({ f, d: 0.14, type: 'triangle', v: 0.3, at: i * 0.045 })); },
+  crumble() { noise({ d: 0.25, v: 0.25, hp: 100, lp: 900 }); },
+  egg() { tone({ f: 900, f2: 500, d: 0.12, type: 'triangle', v: 0.2 }); },
+  combo() { [784, 1047, 1319, 1568].forEach((f, i) => tone({ f, d: 0.1, type: 'square', v: 0.16, at: i * 0.04 })); },
   land() { noise({ d: 0.07, v: 0.18, hp: 200, lp: 1200 }); },
   coin() {
     const now = performance.now();

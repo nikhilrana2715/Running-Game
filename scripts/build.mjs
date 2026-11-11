@@ -35,6 +35,7 @@ try {
   // Windows: bsdtar can write zip (-a). Linux/macOS (CI): use zip.
   if (process.platform === 'win32') execFileSync('tar', ['-a', '-c', '-f', `../${zipName}`, '*'], { cwd: 'dist/extension', shell: true, stdio: 'ignore' });
   else execFileSync('zip', ['-qr', `../${zipName}`, '.'], { cwd: 'dist/extension', stdio: 'ignore' });
+  fs.copyFileSync(`dist/${zipName}`, 'dist/funny-jump-extension.zip'); // stable name for releases/latest/download links
   console.log(`✔ dist/${zipName}`);
 } catch { console.log('(zip skipped: no zip tool)'); }
 
