@@ -33,7 +33,7 @@
 
 |  |  |
 |---|---|
-| 🧊 **Realistic 3D world** | PBR-lit 3D terrain with procedural grass/dirt/bark/wood textures, swaying-style grass blades, forests, snowy mountains, soft clouds, atmospheric haze, sun & moon sky, real-time shadows and reflections. Switch between **3D HD / 3D Lite / 2D** in Settings. |
+| 🧊 **Photo-real 3D world** | Real photographed sky panoramas (day, golden hour, Milky-Way night), photo-scanned trees, shrubs, grass and rocks, real soil/grass/wood textures, image-based lighting, soft shadows, bloom and atmospheric haze. | Switch between **3D HD / 3D Lite / 2D** in Settings. |
 | 🌗 **Living world** | A real-time day → sunset → night → dawn cycle. Sky, sun/moon, stars, fireflies, glowing coins, lantern-lit darkness, the music *and* the UI colours all change with it. |
 | 🕸️ **Web Swing** | Double-tap jump to shoot a web, zip forward and fling into a long glide. Tap again mid-flight to chain swings. |
 | 🫧 **Power-ups** | Speed Boots, Super Jump, Shield, Coin Magnet, Heart and Web refills float along every run. |
@@ -282,6 +282,10 @@ Issues and pull requests are welcome.
 2. `npm install && npm run build && npm run serve` and test on desktop and mobile widths
 3. Keep the rules: no runtime dependencies, no inline `<script>` / `on*=` handlers, and art/audio generated in code
 4. Open a PR describing the change, with a screenshot or GIF for visual changes
+
+## 🙏 Credits
+
+Photo assets (sky panoramas, textures, tree/plant/rock scans) by **[Poly Haven](https://polyhaven.com)**, CC0. 3D engine: **[three.js](https://threejs.org)** (MIT). See [`tools/assets3d/README.md`](tools/assets3d/README.md) for the exact assets and the baking pipeline.
 
 ## 📄 License
 

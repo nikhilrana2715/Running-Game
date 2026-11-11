@@ -1,0 +1,44 @@
+<!doctype html>
+<html><head><meta charset="utf-8">
+<script type="importmap">{ "imports": { "three": "./threepkg/package/build/three.module.js", "three/addons/": "./threepkg/package/examples/jsm/" } }</script>
+</head><body style="margin:0;background:transparent">
+<script type="module">
+import * as THREE from 'three';
+import { GLTFLoader } from 'three/addons/loaders/GLTFLoader.js';
+import { RoomEnvironment } from 'three/addons/environments/RoomEnvironment.js';
+
+const renderer = new THREE.WebGLRenderer({ antialias: true, alpha: true, preserveDrawingBuffer: true });
+renderer.outputColorSpace = THREE.SRGBColorSpace;
+renderer.toneMapping = THREE.ACESFilmicToneMapping; renderer.toneMappingExposure = 1.0;
+renderer.setClearColor(0x000000, 0);
+document.body.appendChild(renderer.domElement);
+const pmrem = new THREE.PMREMGenerator(renderer);
+const envTex = pmrem.fromScene(new RoomEnvironment(), 0.04).texture;
+
+// bake one model -> transparent webp data URL, side view (orthographic), soft daylight
+window.bake = async (url, size, yaw = 0, maxH = 1) => {
+  const gltf = await new GLTFLoader().loadAsync(url);
+  const scene = new THREE.Scene(); scene.environment = envTex;
+  const obj = gltf.scene; obj.rotation.y = yaw; scene.add(obj);
+  obj.traverse((o) => { if (o.isMesh) { o.castShadow = o.receiveShadow = true; const m = o.material; if (m) { m.envMapIntensity = 0.55; if (m.map) m.map.anisotropy = 8; } } });
+  const box = new THREE.Box3().setFromObject(obj), sz = box.getSize(new THREE.Vector3()), c = box.getCenter(new THREE.Vector3());
+  const w = Math.max(sz.x, sz.z) * 1.04, h = sz.y * 1.04;
+  const aspect = w / h, W = Math.round(aspect >= 1 ? size : size * aspect), H = Math.round(aspect >= 1 ? size / aspect : size);
+  renderer.setSize(W, H, false);
+  const cam = new THREE.OrthographicCamera(-w / 2, w / 2, h / 2, -h / 2, 0.01, 1000);
+  cam.position.set(c.x, c.y, c.z + Math.max(sz.x, sz.z) * 4 + 10); cam.lookAt(c.x, c.y, c.z);
+  scene.add(new THREE.HemisphereLight(0xdfefff, 0x55603a, 1.1));
+  const sun = new THREE.DirectionalLight(0xfff2dd, 2.6); sun.position.set(c.x - sz.y, c.y + sz.y * 2, c.z + sz.y * 1.5); sun.target.position.copy(c);
+  sun.castShadow = true; const r = Math.max(sz.x, sz.y, sz.z); Object.assign(sun.shadow.camera, { left: -r, right: r, top: r, bottom: -r, near: 0.1, far: r * 10 }); sun.shadow.mapSize.set(2048, 2048); sun.shadow.bias = -0.0005;
+  scene.add(sun, sun.target);
+  renderer.shadowMap.enabled = true;
+  renderer.render(scene, cam);
+  return { data: renderer.domElement.toDataURL('image/webp', 0.88), w: sz.x, h: sz.y, W, H };
+};
+window.resizeSky = async (url, W, H) => {
+  const img = new Image(); img.src = url; await img.decode();
+  const c = document.createElement('canvas'); c.width = W; c.height = H; c.getContext('2d').drawImage(img, 0, 0, W, H);
+  return c.toDataURL('image/jpeg', 0.86);
+};
+window.ready = true;
+</script></body></html>

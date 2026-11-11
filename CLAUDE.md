@@ -95,6 +95,12 @@ Store: skins red(free)/blue 500/ninja 800/pink 1000/robo 1500; Extra Heart 1000,
 - Camera UP lowered to 2.6 so the horizon sits lower (more sky). Lite: shadows 1024, DPR 1, no blades.
 - SwiftShader headless ~2.5 fps (software only); real GPU needed to judge perf.
 
+## Session 7 (2026-11-11) — v2.2.0 photo-real 3D
+- `src/assets3d/` (3.3 MB, Poly Haven CC0): sky/{day,sunset,night}.jpg panoramas, tex/*_diff|_nor.jpg, sprites/*.webp impostors (trees/shrubs/grass/rocks baked from 25–200 MB photoscans, sizes in `SPR`). Pipeline + credits: tools/assets3d/.
+- Sky dome shader blends the 3 panoramas (wSet from warm, wNight from night) and feeds PMREM IBL. Terrain is now a custom mesher (exposed faces, world-space UVs, grass lip) with photo textures tinted per world. Vegetation = alpha-tested MeshBasic planes tinted by light (SPR_MATS). Forest backdrop sprites + textured hills + valley floor; low-poly mountains disabled.
+- HD adds EffectComposer (vendored src/vendor/jsm/*, imports rewritten to ../../three.module.min.js): RenderPass → UnrealBloom → OutputPass → vignette. Lite = direct render.
+- scripts/apk.mjs uses quoted absolute gradlew path (spaces + NoDefaultCurrentDirectoryInExePath).
+
 ## Next / ideas (roadmap items not done)
 - Boss levels (19–24), egg-throwing chicken, falling platforms
 - Supabase leaderboard + analytics events (roadmap Phase 10) — needs user's Supabase project
