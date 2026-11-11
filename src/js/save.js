@@ -15,7 +15,7 @@ function fresh() {
     levels,
     endless: { bestDistance: 0, bestScore: 0 },
     daily: { day: '', missions: [], lastClaim: '', streak: 0 },
-    settings: { music: 0.6, sfx: 0.9, vibration: true, lang: 'en', controls: 'auto', controlSize: 1, cycle: 'auto' },
+    settings: { music: 0.6, sfx: 0.9, vibration: true, lang: 'en', controls: 'auto', controlSize: 1, cycle: 'auto', graphics: 'auto' },
     stats: { totalCoins: 0, deaths: 0, playTimeSec: 0, stomps: 0, runs: 0, webs: 0, powerups: 0 },
   };
 }

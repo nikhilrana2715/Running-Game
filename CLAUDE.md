@@ -12,7 +12,7 @@ Signature feature: live **day ↔ night cycle** (75 s loop, 55 s in endless). Sk
 lantern-light darkness, fireflies, glowing coins/boxes, music filter, AND all DOM UI tokens morph via CSS var `--n` (0..1).
 
 ## Tech decisions (don't re-litigate)
-- Vanilla JS ES modules + Canvas 2D. **No engine, no bundler, no runtime deps** (MV3 CSP + offline). Phaser from roadmap intentionally dropped.
+- Vanilla JS ES modules. **No bundler, no CDN** (MV3 CSP + offline). Phaser dropped. Since v2.0 three.js r160 is vendored at `src/vendor/three.module.min.js` (single file, no imports) for the 3D renderer; 2D Canvas renderer kept as fallback/option.
 - All art procedural in `art.js` (no sprite files). All audio synthesized (`audio.js`, WebAudio). Fonts bundled (`src/fonts`, from @fontsource).
 - Levels procedurally generated + **seeded** (`levelgen.js`): level N always same. Tiled editor not used.
 - Capacitor **6** (not 7) because machine has JDK 17 + compileSdk 34. Android SDK at `%LOCALAPPDATA%\Android\Sdk`.
@@ -80,6 +80,14 @@ Store: skins red(free)/blue 500/ninja 800/pink 1000/robo 1500; Extra Heart 1000,
 - GitHub Pages enabled via API (build_type=workflow) → live at https://nikhilrana2715.github.io/Running-Game/
 - New: `crumble` ents (one-way, trig 0.5 s → fall → respawn 3 s; `segCrumble` in levelgen, d>0.15), chicken drops `egg` ents when hero within 380 px (diff>0.2), coin combo (`addCoins`: <0.9 s streak, mult 1+floor(combo/8) max 5, +3 coins per tier, HUD `#hud-combo`). NOTE: new segment weight changed all level layouts (still seeded, 5 stars each).
 - Release also uploads stable `funny-jump-extension.zip` (latest/download link). Extension verified in real Chrome from release zip (popup + full tab, no errors).
+
+## Session 5 (2026-11-11) — v2.0.0 3D
+- `render3d.js` `Renderer3D`: draws the same Game state in 3D. 1 unit = 1 tile, y flipped, gameplay plane z=0. Camera raised UP=4.5 with off-axis projection (`P[9] = -P[5]*UP/DIST`) so z=0 maps exactly like 2D → `drawOverlay()` reuses `game.drawParticles`, web line, shield on `#fx` 2D canvas.
+- Terrain: 16-col chunks of InstancedMesh boxes using 2D tile sprites as textures; `level.set` wrapped to mark chunks dirty. Entities: Map ent→Group built lazily (`buildEnt`/`placeEnt`), cleaned every 2 s. Decor append-only. Hero built from primitives per skin (`buildHero`/`animHero`), inverted-hull outlines. Toon materials (3-step ramp), glow materials scale with night.
+- Lights: hemi + directional sun/moon (shadows only in 'hd') + hero lantern at night. Sky = canvas gradient background; sun/moon/stars/clouds/hills/mountains pools wrap around camera.
+- Setting `graphics`: auto|hd|lite|2d (auto → lite on coarse pointer/popup). `#stage3d` (WebGL) + `#fx` overlay; `#stage` 2D hidden in 3D. No WebGL → 2D.
+- Headless SwiftShader ~10 fps (software); real GPUs fine. Extension popup verified in 3D.
+- Git: local history rewritten to drop Claude co-author trailers; remote still old until user force-pushes (auto-mode blocked force push). Never add Co-Authored-By.
 
 ## Next / ideas (roadmap items not done)
 - Boss levels (19–24), egg-throwing chicken, falling platforms

@@ -1,6 +1,7 @@
 // App controller: screens, HUD, store, settings, trophies, main loop, platform glue (web / extension / Android).
 import { GAME, LEVEL_COUNT, SKINS, UPGRADES, WORLDS, POWERUPS, worldFor } from './config.js';
 import { Game } from './game.js';
+import { Renderer3D, webglOK } from './render3d.js';
 import { Save } from './save.js';
 import { initInput, updateInput, input } from './input.js';
 import { sfx, unlockAudio, startMusic, applyVolumes, suspendAll } from './audio.js';
@@ -20,6 +21,23 @@ const IS_NATIVE = !!(CAP && CAP.isNativePlatform && CAP.isNativePlatform());
 if (IS_POPUP) html.classList.add('popup');
 
 const canvas = $('#stage'), ctx = canvas.getContext('2d', { alpha: false });
+const fx = $('#fx'), fxCtx = fx.getContext('2d');
+// ---- 3D renderer (falls back to 2D when WebGL is missing or the player picks 2D)
+let r3d = null, use3d = false;
+function gfxMode() {
+  const g = Save.data.settings.graphics;
+  if (g === '2d' || !webglOK()) return '2d';
+  if (g === 'auto') return IS_POPUP || matchMedia('(pointer: coarse)').matches ? 'lite' : 'hd';
+  return g;
+}
+function applyGraphics() {
+  const m = gfxMode();
+  use3d = m !== '2d';
+  if (use3d && !r3d) { try { r3d = new Renderer3D($('#stage3d')); } catch (err) { console.warn('3D unavailable', err); use3d = false; } }
+  if (use3d) r3d.setQuality(m);
+  $('#stage3d').hidden = !use3d; $('#fx').hidden = !use3d; canvas.hidden = use3d;
+  resize();
+}
 let game = null, demo = null, screen = 'loading', backTo = 'menu', paused = false, levelPage = 0;
 let lastRun = { mode: 'level', level: 1 }, lastN = -1, lastHud = {};
 
@@ -28,6 +46,8 @@ function resize() {
   const dpr = Math.min(IS_POPUP ? 1.5 : 2, window.devicePixelRatio || 1);
   const w = IS_POPUP ? 780 : innerWidth, h = IS_POPUP ? 440 : innerHeight;
   canvas.width = Math.round(w * dpr); canvas.height = Math.round(h * dpr);
+  fx.width = canvas.width; fx.height = canvas.height;
+  if (r3d && use3d) r3d.resize(w, h);
   const coarse = matchMedia('(pointer: coarse)').matches;
   $('#rotate').hidden = !(coarse && innerHeight > innerWidth && !IS_POPUP);
 }
@@ -301,6 +321,7 @@ function bindSettings() {
     if (v === 'true' || v === 'false') v = v === 'true'; else if (!isNaN(+v)) v = +v;
     Save.data.settings[k] = v; Save.persist(); sfx.click();
     if (k === 'lang') applyI18n();
+    if (k === 'graphics') applyGraphics();
     applyControls(); renderSettings();
   }));
   $('#btn-reset').addEventListener('click', (e) => {
@@ -405,7 +426,8 @@ function frame(now) {
   const g = screen === 'play' && game ? game : demo;
   if (g) {
     if (g === demo || !paused) g.update(dt, input);
-    g.render(ctx, canvas.width, canvas.height);
+    if (use3d) { r3d.render(g, canvas.width, canvas.height); r3d.drawOverlay(g, fxCtx, fx.width, fx.height); }
+    else g.render(ctx, canvas.width, canvas.height);
     const n = Math.round((g.sky?.night || 0) * 50) / 50;
     if (n !== lastN) { lastN = n; html.style.setProperty('--n', n); html.classList.toggle('is-night', n > 0.5); }
   }
@@ -416,7 +438,7 @@ function frame(now) {
 if (params.has('debug')) window.__fj = { get game() { return game; }, get demo() { return demo; }, start, Save };
 
 async function boot() {
-  resize(); applyI18n(); wire(); applyVolumes();
+  applyI18n(); wire(); applyVolumes(); applyGraphics();
   const bar = $('#loadbar'); bar.style.width = '30%';
   demo = new Game({ mode: 'endless', demo: true });
   requestAnimationFrame(frame);

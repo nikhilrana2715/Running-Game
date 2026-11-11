@@ -45,7 +45,9 @@
   </svg>
 
   <div id="app">
+    <canvas id="stage3d" aria-label="Game world (3D)" hidden></canvas>
     <canvas id="stage" aria-label="Game world"></canvas>
+    <canvas id="fx" aria-hidden="true" hidden></canvas>
     <div id="playfield" hidden></div>
 
     <!-- HUD -->
@@ -160,6 +162,7 @@
         <label class="row"><svg class="ico"><use href="#i-music"/></svg><span data-i18n="music">Music</span><input type="range" min="0" max="1" step="0.05" id="set-music" /></label>
         <label class="row"><svg class="ico"><use href="#i-sound"/></svg><span data-i18n="sfx">Sound FX</span><input type="range" min="0" max="1" step="0.05" id="set-sfx" /></label>
         <div class="row"><span data-i18n="vibration">Vibration</span><div class="seg" data-set="vibration"><button data-v="true" data-i18n="on">On</button><button data-v="false" data-i18n="off">Off</button></div></div>
+        <div class="row"><span data-i18n="graphics">Graphics</span><div class="seg" data-set="graphics"><button data-v="auto" data-i18n="auto">Auto</button><button data-v="hd">3D HD</button><button data-v="lite">3D Lite</button><button data-v="2d">2D</button></div></div>
         <div class="row"><span data-i18n="dayNight">Day / Night</span><div class="seg" data-set="cycle"><button data-v="auto" data-i18n="auto">Auto</button><button data-v="day"><svg class="ico"><use href="#i-sun"/></svg></button><button data-v="night"><svg class="ico"><use href="#i-moon"/></svg></button></div></div>
         <div class="row"><span data-i18n="buttons">Screen buttons</span><div class="seg" data-set="controls"><button data-v="auto" data-i18n="auto">Auto</button><button data-v="always" data-i18n="show">Show</button><button data-v="never" data-i18n="hide">Hide</button></div></div>
         <div class="row"><span data-i18n="btnSize">Button size</span><div class="seg" data-set="controlSize"><button data-v="0.8">S</button><button data-v="1">M</button><button data-v="1.2">L</button></div></div>

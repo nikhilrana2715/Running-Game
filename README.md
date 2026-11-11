@@ -4,7 +4,7 @@
 
 # Funny Jump
 
-### A bright cartoon runner & platformer with a live day ↔ night cycle.
+### A bright cartoon 3D runner & platformer with a live day ↔ night cycle.
 
 **Run. Jump. Web-swing across the sky.** Play in your browser, from the Chrome toolbar, or on Android, fully offline.
 
@@ -14,7 +14,7 @@
 [![License: MIT](https://img.shields.io/badge/license-MIT-FFC933)](LICENSE)
 ![Platforms](https://img.shields.io/badge/platforms-Web%20%7C%20Chrome%20%7C%20Android-2FA8F5)
 ![Manifest V3](https://img.shields.io/badge/Chrome-Manifest%20V3-4285F4?logo=googlechrome&logoColor=white)
-![No dependencies](https://img.shields.io/badge/runtime%20deps-0-8E44D8)
+![3D](https://img.shields.io/badge/graphics-3D%20(three.js)%20%2B%202D-8E44D8)
 ![Offline](https://img.shields.io/badge/works-offline-2E9E4B)
 
 **[▶ Play in browser](https://nikhilrana2715.github.io/Running-Game/)** ·
@@ -33,6 +33,7 @@
 
 |  |  |
 |---|---|
+| 🧊 **Full 3D world** | Toon-shaded 3D terrain, hero, enemies and items with real-time shadows, rolling hills, mountains and clouds. Switch between **3D HD / 3D Lite / 2D** in Settings. |
 | 🌗 **Living world** | A real-time day → sunset → night → dawn cycle. Sky, sun/moon, stars, fireflies, glowing coins, lantern-lit darkness, the music *and* the UI colours all change with it. |
 | 🕸️ **Web Swing** | Double-tap jump to shoot a web, zip forward and fling into a long glide. Tap again mid-flight to chain swings. |
 | 🫧 **Power-ups** | Speed Boots, Super Jump, Shield, Coin Magnet, Heart and Web refills float along every run. |
@@ -102,6 +103,12 @@ Coins are banked when you finish a level or hit game over, and also when you qui
 ### Daily rewards & missions
 - **Login streak:** 50 → 75 → 100 → 150 → 200 → 250 → **500 coins + free Revive** on day 7.
 - **3 daily missions** (e.g. *Web Swing 6 times*, *Stomp 10 enemies*, *Collect 200 coins*) worth 50–150 coins each.
+
+### 3D graphics
+- Real 3D scene (three.js, bundled locally, so it works offline and inside the extension): block terrain, a 3D hero for every skin, 3D enemies, coins, stars, chests, power bubbles and goal gate.
+- Day ↔ night drives the sun and moon arc, light colour, soft shadows, fog, starfield, a hero lantern at night and glowing coins and boxes.
+- **Graphics setting:** *Auto* (HD on desktop, Lite on phones and the popup), *3D HD* (shadows, high DPI), *3D Lite* (no shadows, lower DPI), *2D* (the classic renderer). Without WebGL the game falls back to 2D on its own.
+- Gameplay physics are identical in 2D and 3D, so levels, scores and saves are shared.
 
 ### Polish
 Coyote time, jump buffering, variable jump height, squash & stretch, screen shake, particles, synthesized SFX and adaptive music, haptics on Android, an English / हिन्दी UI and trophies.
@@ -187,7 +194,7 @@ One-time setup: **Settings → Pages → Source: GitHub Actions**.
 
 ## 🧱 Architecture
 
-Vanilla JavaScript ES modules + Canvas 2D. There's **no engine, no bundler and no runtime dependencies**, so it passes the strict MV3 extension CSP and runs fully offline. All art is drawn procedurally in code, and all sound is synthesized with WebAudio.
+Vanilla JavaScript ES modules. The simulation runs in 2D (pixels). It is drawn either by the **3D renderer** (`render3d.js`, three.js r160 vendored in `src/vendor/`) or by the classic **Canvas 2D** renderer. There is **no bundler and no CDN**, so the game passes the strict MV3 extension CSP and runs fully offline. All models and art are generated in code, and all sound is synthesized with WebAudio.
 
 ```
 src/
@@ -198,7 +205,8 @@ src/
 │   ├── main.js           # screens, HUD, store, settings, daily, platform glue, main loop
 │   ├── game.js           # physics, web swing, power-ups, enemies, camera, rendering, lighting
 │   ├── levelgen.js       # seeded procedural levels + endless streaming + power-up spawns
-│   ├── sky.js            # day/night phase -> sky state, parallax background
+│   ├── render3d.js       # 3D scene: terrain chunks, hero/enemy models, lights, shadows, sky
+│   ├── sky.js            # day/night phase -> sky state, 2D parallax background
 │   ├── art.js            # every sprite, drawn in code
 │   ├── audio.js          # synthesized SFX + step-sequencer music
 │   ├── input.js          # keyboard, multitouch buttons, gamepad
@@ -206,6 +214,7 @@ src/
 │   ├── save.js           # versioned localStorage save
 │   ├── config.js         # all tuning constants (physics, web, power-ups, store)
 │   └── i18n.js           # English / Hindi
+├── vendor/three.module.min.js  # three.js r160 (MIT), local copy
 ├── sw.js                 # offline cache (PWA)
 └── privacy.html          # privacy policy
 extension/                # MV3 manifest, popup, background worker
@@ -216,7 +225,8 @@ scripts/                  # build, icons, store assets, dev server
 
 | Decision | Why |
 |---|---|
-| No engine / bundler | Tiny download, instant load, MV3 CSP compliant, no build step to debug |
+| three.js vendored, no bundler | 3D without a build step; local file keeps MV3 CSP + offline |
+| 2D sim + 3D view | One physics engine; the 3D camera uses an off-axis frustum so the gameplay plane matches the 2D framing pixel-for-pixel (2D particles overlay exactly) |
 | Procedural art & audio | Zero asset files, crisp at any resolution, easy to recolour per world |
 | Seeded level generation | 24 handcrafted-feeling levels plus infinite endless mode from one generator |
 | Capacitor 6 | Native Android wrapper with fullscreen, back button and haptics |
@@ -231,6 +241,7 @@ scripts/                  # build, icons, store assets, dev server
 - [x] CI: GitHub Pages + automated releases
 - [ ] Chrome Web Store listing
 - [x] Crumbling platforms, egg-bomber chickens, coin combos
+- [x] Full 3D renderer (HD / Lite) with 2D fallback
 - [ ] Boss levels
 - [ ] Online leaderboard
 - [ ] Signed Play Store release build
