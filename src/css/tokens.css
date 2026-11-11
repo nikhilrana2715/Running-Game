@@ -1,0 +1,62 @@
+/* Funny Jump Design System v1.0 — tokens. Components use ONLY these.
+   --n (0..1) is driven by the live day/night cycle; every themed token morphs with it. */
+@font-face { font-family: 'Lilita One'; src: url('../fonts/lilita-one-latin-400-normal.woff2') format('woff2'); font-display: swap; }
+@font-face { font-family: 'Fredoka'; src: url('../fonts/fredoka-latin-500-normal.woff2') format('woff2'); font-weight: 500; font-display: swap; }
+@font-face { font-family: 'Fredoka'; src: url('../fonts/fredoka-latin-700-normal.woff2') format('woff2'); font-weight: 700; font-display: swap; }
+
+@property --n { syntax: '<number>'; inherits: true; initial-value: 0; }
+
+:root {
+  --n: 0;
+  --np: calc(var(--n) * 100%);
+
+  /* brand palette (roadmap §1.4) */
+  --c-sky: #2FA8F5;       --c-sky-lt: #8ED8FF;
+  --c-grass: #7ED321;     --c-grass-dk: #4CAF1A;
+  --c-wood: #C8742A;      --c-wood-dk: #8B4A1F;
+  --c-yellow: #FFC933;    --c-yellow-dk: #FF9F1C;
+  --c-purple: #8E44D8;    --c-purple-dk: #5B2A9E;
+  --c-red: #E53935;       --c-red-dk: #A8201D;
+  --c-green: #4CC23A;     --c-green-dk: #2E8A22;
+  --c-navy: #12294A;      --c-navy-dk: #0A1830;
+  --c-lock: #7B8794;      --c-lock-dk: #4E5864;
+  --c-ink: #2B1A10;       --c-white: #FFFFFF;
+  --c-cream: #FFF4D6;     --c-cream-dk: #F2D9A6;
+  --c-night: #1B2150;     --c-night-dk: #0E1235;
+  --c-glow: #FFE58A;
+
+  /* semantic, theme-morphing (day -> night) */
+  --panel:       color-mix(in oklab, var(--c-night) var(--np), var(--c-cream));
+  --panel-edge:  color-mix(in oklab, #5A6BFF var(--np), var(--c-cream-dk));
+  --panel-ink:   color-mix(in oklab, #EAF0FF var(--np), #5A3410);
+  --hud-bg:      color-mix(in oklab, rgba(10, 14, 45, .78) var(--np), rgba(18, 41, 74, .82));
+  --hud-edge:    color-mix(in oklab, #7C8CFF var(--np), rgba(255, 255, 255, .25));
+  --hud-glow:    0 0 calc(var(--n) * 18px) rgba(124, 140, 255, calc(var(--n) * .55));
+  --ctl-bg:      color-mix(in oklab, rgba(120, 140, 255, .22) var(--np), rgba(255, 255, 255, .22));
+  --ctl-ring:    color-mix(in oklab, rgba(170, 185, 255, .9) var(--np), rgba(255, 255, 255, .9));
+  --scrim:       color-mix(in oklab, rgba(4, 6, 24, .62) var(--np), rgba(18, 41, 74, .45));
+  --text-on-sky: #FFFFFF;
+
+  /* typography scale */
+  --font-display: 'Lilita One', 'Baloo 2', 'Arial Rounded MT Bold', system-ui, sans-serif;
+  --font-body: 'Fredoka', 'Nunito', system-ui, sans-serif;
+  --fs-12: 12px; --fs-14: 14px; --fs-18: 18px; --fs-24: 24px; --fs-32: 32px; --fs-48: 48px; --fs-72: 72px;
+
+  /* spacing (4/8 base) */
+  --s-4: 4px; --s-8: 8px; --s-12: 12px; --s-16: 16px; --s-24: 24px; --s-32: 32px; --s-48: 48px;
+
+  /* radius */
+  --r-8: 8px; --r-12: 12px; --r-20: 20px; --r-28: 28px; --r-pill: 999px;
+
+  /* depth */
+  --outline: 3px solid var(--c-ink);
+  --shadow-soft: 0 10px 24px rgba(0, 0, 0, .25);
+  --press: 6px;
+
+  /* motion */
+  --ease-pop: cubic-bezier(.34, 1.56, .64, 1);
+  --t-fast: 120ms; --t-med: 260ms; --t-slow: 600ms;
+
+  /* controls */
+  --ctl-size: 84px;
+}

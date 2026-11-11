@@ -1,0 +1,18 @@
+{
+  "manifest_version": 3,
+  "name": "Funny Jump – Mini Game",
+  "short_name": "Funny Jump",
+  "version": "__VERSION__",
+  "description": "Quick cartoon runner & platformer with a live day-night cycle. Play in the popup or a full tab — works offline.",
+  "icons": { "16": "icons/icon-16.png", "32": "icons/icon-32.png", "48": "icons/icon-48.png", "128": "icons/icon-128.png" },
+  "action": {
+    "default_title": "Funny Jump",
+    "default_popup": "popup.html",
+    "default_icon": { "16": "icons/icon-16.png", "32": "icons/icon-32.png" }
+  },
+  "commands": {
+    "open-full": { "suggested_key": { "default": "Alt+Shift+J" }, "description": "Open Funny Jump in a full tab" }
+  },
+  "background": { "service_worker": "background.js" },
+  "offline_enabled": true
+}

@@ -1,0 +1,23 @@
+{
+  "name": "funny-jump",
+  "version": "1.1.0",
+  "private": true,
+  "description": "Funny Jump - cartoon runner/platformer with live day-night cycle. Web (PWA) + Chrome extension + Android (Capacitor).",
+  "type": "module",
+  "scripts": {
+    "build": "node scripts/build.mjs",
+    "serve": "npx --yes http-server dist/web -p 5173 -c-1",
+    "android:sync": "node scripts/build.mjs && npx cap sync android",
+    "android:apk": "node scripts/build.mjs && npx cap sync android && cd android && gradlew.bat assembleDebug && cd .. && node -e \"require('fs').copyFileSync('android/app/build/outputs/apk/debug/app-debug.apk','dist/FunnyJump-debug.apk')\""
+  },
+  "devDependencies": {
+    "@capacitor/cli": "^6.2.3",
+    "@fontsource/fredoka": "^5.3.0",
+    "@fontsource/lilita-one": "^5.3.0"
+  },
+  "dependencies": {
+    "@capacitor/android": "^6.2.3",
+    "@capacitor/app": "^6.0.3",
+    "@capacitor/core": "^6.2.3"
+  }
+}

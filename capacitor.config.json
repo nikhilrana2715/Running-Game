@@ -1,0 +1,9 @@
+{
+  "appId": "com.funnyjump.game",
+  "appName": "Funny Jump",
+  "webDir": "dist/web",
+  "android": {
+    "backgroundColor": "#2FA8F5",
+    "allowMixedContent": false
+  }
+}
