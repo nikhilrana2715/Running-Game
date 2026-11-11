@@ -45,7 +45,8 @@ Funny Jump is a bright cartoon runner & platformer you can play right from your 
 - **Single purpose:** "A casual offline mini game played in the extension popup or a full tab."
 - **Permissions:** none requested (nothing to justify).
 - **Remote code:** **No**, I am not using remote code.
-- **Data usage:** tick nothing (the extension does not collect user data); tick all three certification boxes.
+- **Data usage:** tick **Personally identifiable information → Name** only if you count the optional leaderboard nickname (it is user-typed, public, and sent only when the player presses *Submit score*). Tick all three certification boxes.
+- **Permissions:** still none (the leaderboard uses plain `fetch` to Supabase, which needs no extension permission).
 - **Privacy policy URL:** `https://nikhilrana2715.github.io/Running-Game/privacy.html` (deployed by GitHub Pages).
 
 ### Distribution

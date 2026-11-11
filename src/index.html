@@ -180,6 +180,8 @@
         <span class="spacer"></span>
       </div>
       <div class="panel panel--scroll">
+        <h3 class="lb-h">🌍 <span data-i18n="worldTop">World Top 20 · Endless</span></h3>
+        <ol class="leaderboard" id="leaderboard"><li class="lb-msg">…</li></ol>
         <div class="stats" id="stats"></div>
         <ul class="achievements" id="achievements"></ul>
       </div>
@@ -228,6 +230,10 @@
           <button class="btn btn--purple btn--icon-lg" data-action="home" aria-label="Home"><svg><use href="#i-home"/></svg></button>
           <button class="btn btn--yellow btn--lg" data-action="retry"><svg><use href="#i-retry"/></svg><span data-i18n="retry">Retry</span></button>
           <button class="btn btn--green btn--md" data-action="revive" id="btn-revive"><svg><use href="#i-heart"/></svg><span id="revive-label">Revive</span></button>
+        </div>
+        <div class="submit-row" id="submit-row" hidden>
+          <input id="lb-name" maxlength="16" placeholder="Your name" autocomplete="nickname" aria-label="Your name">
+          <button class="btn btn--purple btn--sm" id="btn-submit-score">🌍 <span data-i18n="submitScore">Submit score</span></button>
         </div>
       </div>
     </div>

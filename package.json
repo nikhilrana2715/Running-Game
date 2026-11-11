@@ -1,6 +1,6 @@
 {
   "name": "funny-jump",
-  "version": "2.2.0",
+  "version": "2.3.0",
   "private": true,
   "description": "Funny Jump - cartoon runner/platformer with live day-night cycle. Web (PWA) + Chrome extension + Android (Capacitor).",
   "type": "module",

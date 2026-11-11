@@ -101,6 +101,11 @@ Store: skins red(free)/blue 500/ninja 800/pink 1000/robo 1500; Extra Heart 1000,
 - HD adds EffectComposer (vendored src/vendor/jsm/*, imports rewritten to ../../three.module.min.js): RenderPass → UnrealBloom → OutputPass → vignette. Lite = direct render.
 - scripts/apk.mjs uses quoted absolute gradlew path (spaces + NoDefaultCurrentDirectoryInExePath).
 
+## Session 8 (2026-11-11) — v2.3.0 Supabase leaderboard + Vercel
+- Supabase project `funny-jump` (ref wtzqbwsdqsefihtkdnnt, ap-south-1, org nikhilrana2715's Org). Table public.scores + RLS (select/insert only). `src/js/online.js` (fetch PostgREST, publishable key, 6 s timeout). UI: name+Submit on Endless game-over modal (`#submit-row`), World Top 20 on Trophy screen (`#leaderboard`). Two 'TestBot' test rows left in the table (delete was declined).
+- Vercel: MCP connector has no write permission (403); CLI not logged in. Made a `--temporary` claimable deploy; real setup = import repo at vercel.com/new (vercel.json has settings) or `npx vercel login` then `npx vercel --prod`.
+- Privacy policy + CWS doc updated for the optional nickname/score upload.
+
 ## Next / ideas (roadmap items not done)
 - Boss levels (19–24), egg-throwing chicken, falling platforms
 - Supabase leaderboard + analytics events (roadmap Phase 10) — needs user's Supabase project

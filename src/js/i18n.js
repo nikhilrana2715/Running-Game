@@ -5,6 +5,7 @@ const DICT = {
   hi: {
     daily: 'रोज़ का इनाम', missions: 'आज के मिशन', close: 'बंद करो', claim: 'लो', day: 'दिन', comeBack: 'कल फिर आना!',
     graphics: 'ग्राफ़िक्स',
+    submitScore: 'स्कोर भेजो', worldTop: 'दुनिया के टॉप 20 · एंडलेस', enterName: 'अपना नाम लिखो', inWorld: 'दुनिया में!', offline: 'इंटरनेट नहीं — फिर कोशिश करो', loading: 'लोड हो रहा है…', beFirst: 'अभी कोई स्कोर नहीं — पहले बनो!',
     webHint: '🕸️ हवा में JUMP दो बार दबाओ = वेब स्विंग!', score: 'स्कोर', jump: 'कूदो', miniGame: 'मिनी गेम', play: 'खेलो', endless: 'एंडलेस रन', store: 'दुकान',
     hint: '← → / A D चलो · Space / ↑ / क्लिक = कूदो · P = रोको', selectLevel: 'लेवल चुनो', skins: 'स्किन', powerups: 'पावर-अप',
     settings: 'सेटिंग्स', music: 'संगीत', sfx: 'आवाज़', vibration: 'वाइब्रेशन', on: 'चालू', off: 'बंद', dayNight: 'दिन / रात',

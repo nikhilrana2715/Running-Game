@@ -8,6 +8,7 @@ import { sfx, unlockAudio, startMusic, applyVolumes, suspendAll } from './audio.
 import { heroThumb } from './art.js';
 import { t, applyI18n } from './i18n.js';
 import { fmtNum, fmtTime } from './util.js';
+import { topScores, submitScore, cleanName } from './online.js';
 import { DAILY_REWARDS, ensureDay, missionProgress, rewardState, claimReward, claimMission, hasClaimable } from './daily.js';
 
 const $ = (s, r = document) => r.querySelector(s);
@@ -166,6 +167,21 @@ function pause(yes = !paused) {
   sfx.click();
 }
 
+let lastSubmit = null;
+async function doSubmit() {
+  if (!lastSubmit || lastSubmit.done) return;
+  const name = cleanName($('#lb-name').value);
+  if (!name) { $('#lb-name').focus(); toast(t('enterName', 'Enter your name')); return; }
+  const b = $('#btn-submit-score'); b.disabled = true;
+  Save.data.player.name = name; Save.persist();
+  try {
+    const { r } = lastSubmit;
+    const rank = await submitScore({ name, mode: 'endless', score: r.score, distance: r.distance });
+    lastSubmit.done = true; $('#submit-row').hidden = true; sfx.star();
+    toast(rank ? `🌍 #${rank} ${t('inWorld', 'in the world!')}` : '🌍 ✔');
+  } catch (_) { b.disabled = false; toast(t('offline', 'No internet — try again')); }
+}
+
 function showOver(r) {
   $('#over-score').textContent = fmtNum(r.score);
   $('#over-dist-row').hidden = r.mode !== 'endless';
@@ -174,6 +190,11 @@ function showOver(r) {
   const packs = Save.data.upgrades.revive, cost = 150;
   $('#revive-label').textContent = packs > 0 ? `${t('revive')} (${packs})` : `${t('revive')} ${cost}🪙`;
   $('#btn-revive').disabled = !(packs > 0 || Save.data.player.coins >= cost);
+  // online leaderboard (endless runs with a real score)
+  const canSubmit = r.mode === 'endless' && r.score > 0;
+  $('#submit-row').hidden = !canSubmit; lastSubmit = canSubmit ? { r, done: false } : null;
+  $('#lb-name').value = Save.data.player.name === 'Player' ? '' : Save.data.player.name;
+  $('#btn-submit-score').disabled = false;
   sfx.gameOver();
   setTimeout(() => openModal('mdl-over'), 300);
 }
@@ -336,6 +357,15 @@ function syncToggles() {
 }
 
 // ---------------- trophies ----------------
+async function loadLeaderboard() {
+  const box = $('#leaderboard'), esc = (s) => String(s).replace(/[&<>"']/g, (c) => `&#${c.charCodeAt(0)};`);
+  box.innerHTML = `<li class="lb-msg">${t('loading', 'Loading…')}</li>`;
+  try {
+    const rows = await topScores('endless', 20), me = Save.data.player.name;
+    box.innerHTML = rows.length ? rows.map((x) => `<li class="${x.name === me ? 'me' : ''}"><span>${esc(x.name)}</span><small>${fmtNum(x.distance)}m</small><b>${fmtNum(x.score)}</b></li>`).join('')
+      : `<li class="lb-msg">${t('beFirst', 'No scores yet — be the first!')}</li>`;
+  } catch (_) { box.innerHTML = `<li class="lb-msg">${t('offline', 'No internet — try again')}</li>`; }
+}
 function renderTrophy() {
   const s = Save.data, stars = Save.totalStars();
   const done = Object.values(s.levels).filter((l) => l.stars > 0).length;
@@ -349,6 +379,7 @@ function renderTrophy() {
     ['Marathon', 'Run 500m in Endless', s.endless.bestDistance, 500], ['Night Runner', 'Run 1,500m in Endless', s.endless.bestDistance, 1500],
     ['World Tour', 'Finish all 24 levels', done, 24], ['Fashionista', 'Own all 5 skins', s.unlockedSkins.length, 5],
   ];
+  loadLeaderboard();
   $('#achievements').innerHTML = ach.map(([n, d, v, goal]) => {
     const k = Math.min(1, v / goal);
     return `<li class="ach ${k >= 1 ? 'done' : ''}"><div class="medal"><svg><use href="#i-${k >= 1 ? 'trophy' : 'lock'}"/></svg></div><div class="info"><h4>${n}</h4><small>${d} · ${fmtNum(Math.min(v, goal))}/${fmtNum(goal)}</small><div class="bar"><i style="width:${k * 100}%"></i></div></div></li>`;
@@ -369,6 +400,8 @@ function wire() {
   $('#pg-prev').addEventListener('click', () => { levelPage--; sfx.click(); renderLevels(); });
   $('#pg-next').addEventListener('click', () => { levelPage++; sfx.click(); renderLevels(); });
   bindSettings();
+  $('#btn-submit-score').addEventListener('click', doSubmit);
+  $('#lb-name').addEventListener('keydown', (e) => { e.stopPropagation(); if (e.key === 'Enter') doSubmit(); });
   $('#btn-claim-daily').addEventListener('click', () => {
     const n = claimReward(); if (!n) return;
     sfx.chest(); toast(`+${n} 🪙` + (rewardState().streak === 7 ? ' + 💖' : '')); updateWallets(); renderDaily();

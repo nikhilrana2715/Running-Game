@@ -39,6 +39,7 @@
 | 🫧 **Power-ups** | Speed Boots, Super Jump, Shield, Coin Magnet, Heart and Web refills float along every run. |
 | 🪙 **Progress that sticks** | Every coin you pick up is saved for good. Spend coins on skins and permanent upgrades. |
 | 🎁 **Daily loop** | 7-day login streak plus 3 fresh missions every day. |
+| 🌍 **World leaderboard** | Submit your Endless score and see the online World Top 20 (Supabase). |
 | 📦 **One codebase, three platforms** | The same vanilla JS game ships as a PWA, a Chrome MV3 extension and an Android app. |
 
 ## 📸 Screenshots
@@ -191,6 +192,12 @@ git tag v1.2.0 && git push && git push --tags
 
 One-time setup: **Settings → Pages → Source: GitHub Actions**.
 
+### Vercel
+`vercel.json` holds the build settings (`npm run build` → `dist/web`). Import the GitHub repo once at **vercel.com/new**; every push to `main` then redeploys.
+
+### Supabase (online leaderboard)
+Table `public.scores` (name, mode, level, score, distance, created_at) with RLS: anyone may **select** and **insert**, nobody may update or delete; CHECK constraints validate every column. The client (`src/js/online.js`) talks to PostgREST with the public *publishable* key. It needs no SDK and works in the extension too.
+
 **Chrome Web Store:** the step-by-step publishing guide (listing text, privacy answers, images) is in [`docs/CHROME_WEB_STORE.md`](docs/CHROME_WEB_STORE.md).
 
 ## 🧱 Architecture
@@ -239,6 +246,7 @@ scripts/                  # build, icons, store assets, dev server
 - [x] Web, Chrome extension and Android builds
 - [x] Web Swing, power-ups, permanent coin wallet, new upgrades
 - [x] Daily rewards & missions
+- [x] Online leaderboard (Supabase) + Vercel config
 - [x] CI: GitHub Pages + automated releases
 - [ ] Chrome Web Store listing
 - [x] Crumbling platforms, egg-bomber chickens, coin combos
